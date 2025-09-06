@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Aplicacion Mostrar Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      margin: 20px 0;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      display: block;
+      margin: 10px auto;
+      width: 250px;
+
+    }
+   
+    .btn-red { background-color: rgb(11, 116, 202); }
+    .btn-green { background-color: blueviolet; }
+    .card {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 600px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aplicacion Mostrar Info</h1>
+
+  <button class="btn btn-red" onclick="mostrarInfo('reglamento')">Reglamento POO</button>
+  <button class="btn btn-red" onclick="mostrarInfo('lineamientos')">Lineamientos Classroom</button>
+  <button class="btn btn-red" onclick="mostrarInfo('fechas')">Fechas de Parciales</button>
+  <button class="btn btn-green" onclick="mostrarInfo('porcentajes')">Porcentajes por Parcial</button>
+
+  <div id="resultado" class="card"></div>
+
+  <script>
+ 
+    class inicioPAM {
+      reglamentoPOO() {
+        return "El reglamento de POO establece que la asistencia mínima es del 80% y se deben entregar todas las prácticas en tiempo y forma.";
+      }
+      lineamientosClassroom() {
+        return "Todos los trabajos se deben entregar en Google Classroom en formato PDF y dentro de la fecha límite.";
+      }
+      fechasDeParciales() {
+        return "1er Parcial: 15 de marzo<br>2do Parcial: 10 de mayo<br>3er Parcial: 20 de junio";
+      }
+      porcentajesPorParcial() {
+        return `Porcentajes por Parcial:<br>
+        1er Parcial: Evidencias de conocimiento: 40%, Evidencia de desempeño: 20%, Evidencia de producto: 30%, Proyecto integrador: 10%<br>
+        2do Parcial: Evidencias de conocimiento: 40%, Evidencia de desempeño: 20%, Evidencia de producto: 20%, Proyecto integrador: 20%<br>
+        3er Parcial: Evidencias de conocimiento: 20%, Evidencia de desempeño: 10%, Evidencia de producto: 40%, Proyecto integrador: 30%`;
+      }
+    }
+    const pam = new inicioPAM();
+    function mostrarInfo(opcion) {
+      let resultado = document.getElementById("resultado");
+      switch(opcion) {
+        case 'reglamento':
+          resultado.innerHTML = pam.reglamentoPOO();
+          break;
+        case 'lineamientos':
+          resultado.innerHTML = pam.lineamientosClassroom();
+          break;
+        case 'fechas':
+          resultado.innerHTML = pam.fechasDeParciales();
+          break;
+        case 'porcentajes':
+          resultado.innerHTML = pam.porcentajesPorParcial();
+          break;
+      }
+    }
+  </script>
+</body>
+</html>
