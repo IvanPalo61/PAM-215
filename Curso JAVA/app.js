@@ -1,5 +1,6 @@
-let name="John";
-let lastname="Carter";
-let completeName= name + lastname;
+let numberOne=100;
+let numberTwo=100
 
-console.log(completeName);
+let result = numberOne != numberTwo;
+
+console.log(result);
