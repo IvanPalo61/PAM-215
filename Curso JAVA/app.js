@@ -5,7 +5,7 @@ if (result=== true)
 {
     console.log("Login correcto")
 }
-if (result=== false)
+else
 {
-    console.log("Login incorrecto")
+  console.log("contraseña incorrecto")   
 }
