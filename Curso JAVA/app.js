@@ -1,6 +1,11 @@
-let numberOne=100;
-let numberTwo=100
-
-let result = numberOne != numberTwo;
-
-console.log(result);
+let passwordDB="pepe123";
+let input="pepe123";
+let result = input==passwordDB;
+if (result=== true)
+{
+    console.log("Login correcto")
+}
+if (result=== false)
+{
+    console.log("Login incorrecto")
+}
