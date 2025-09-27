@@ -11,9 +11,9 @@ reject("Acesso denegado");
     });
 }
 verificarUsuario("admin")
-.then(res => console.log(res))
-.catch(err => console.error(err));
+.then(aprobado => console.log(aprobado))
+.catch(error => console.log(error));
 
 verificarUsuario("Ivan")
-.then(res => console.log(res))
-.catch(err => console.log(err));
+.then(aprobado => console.log(aprobado))
+.catch(error => console.log(error));
