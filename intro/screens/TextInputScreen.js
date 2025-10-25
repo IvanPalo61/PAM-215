@@ -1,4 +1,4 @@
-import {Text, StyleSheet, View, Button, TextInput, Alert} from 'react-native';
+import {Text, StyleSheet, View, Button, TextInput, Alert,} from 'react-native';
 import React, { useState } from 'react';
 
 export default function TextInputScreen() {
@@ -6,7 +6,7 @@ const [nombre, setNombre] = useState('');
 const [password, setPassword] = useState('');
 const [telefono, setTelefono] = useState('');
 const mostrarAlerta = () => {
-  if (nombre.trim() === '' || password.trim() === '' || telefono.trim() === '') {
+  if (nombre.trim() === '' || correo.trim() === '') {
     Alert.alert('Error', 'Por favor, completa todos los campos (movil).');
      alert('Error', 'Por favor, completa todos los campos (web).');
   } 

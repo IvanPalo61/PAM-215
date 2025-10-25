@@ -4,7 +4,7 @@ import { Text, StyleSheet, View, Button, ScrollView } from 'react-native';
 
 import ContadorScreen from './ContadorScreen';
 import BotonesScreens from './BotonesScreens';
-
+import Repaso from './Repaso';
 import TextInputScreen from './TextInputScreen';
 import ImageBackgroundScreen from './ImageBackgroundScreen';
 import ScrollViewScreen from './ScrollViewScreen';
@@ -35,6 +35,8 @@ export default function MenuScreen() {
       return <ModalScreen />;
     case 'bottom':
       return <BottomSheetScreen />;
+      case 'repaso':
+      return <Repaso />;
     default:
       return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -74,6 +76,9 @@ export default function MenuScreen() {
 
           <View style={styles.buttonContainer}>
             <Button title="Pract: Bottom Sheet" onPress={() => setScreen('bottom')} />
+          </View>
+           <View style={styles.buttonContainer}>
+            <Button title="Pract: Repaso" onPress={() => setScreen('repaso')} />
           </View>
         </ScrollView>
       );
