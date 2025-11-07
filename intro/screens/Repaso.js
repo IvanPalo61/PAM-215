@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, View, Button, TextInput, Alert, Switch, ImageBackground, Animated, Easing 
+import { 
+  Text, 
+  StyleSheet, 
+  View, 
+  Button, 
+  TextInput, 
+  Switch, 
+  ImageBackground, 
+  Animated, 
+  Easing  
 } from 'react-native';
 
 export default function Repaso() {
@@ -23,60 +32,73 @@ export default function Repaso() {
     return () => clearTimeout(timer);
   }, []);
 
- const mostrarAlerta = () => {
- if (nombre.trim() === '' && correo.trim() === '') {
-    Alert.alert('Error', 'Por favor, ingresa tu nombre y tu correo.');
-    return;
-  }
-  if (nombre.trim() === '') {
-    Alert.alert('Error', 'Por favor, ingresa tu nombre.');
-    return;
-  }
+  const mostrarAlerta = () => {
+    const isWeb = typeof window !== 'undefined' && window.alert;
+    
+    if (nombre.trim() === '' && correo.trim() === '') {
+      isWeb ? window.alert('Por favor, ingresa tu nombre y tu correo.') : Alert.alert('Error', 'Por favor, ingresa tu nombre y tu correo.');
+      return;
+    }
+    if (nombre.trim() === '') {
+      isWeb ? window.alert('Por favor, ingresa tu nombre.') : Alert.alert('Error', 'Por favor, ingresa tu nombre.');
+      return;
+    }
 
- 
-  if (correo.trim() === '') {
-    Alert.alert('Error', 'Por favor, ingresa tu correo.');
-    return;
-  }
-  if (!correo.includes('@') || !correo.includes('.com')) {
-    Alert.alert('Correo inválido', 'El correo debe contener "@" y terminar en ".com"');
-    return;
-  }
+    if (correo.trim() === '') {
+      isWeb ? window.alert('Por favor, ingresa tu correo.') : Alert.alert('Error', 'Por favor, ingresa tu correo.');
+      return;
+    }
+    if (!correo.includes('@') || !correo.includes('.com')) {
+      isWeb ? window.alert('El correo debe contener "@" y terminar en ".com"') : Alert.alert('Correo inválido', 'El correo debe contener "@" y terminar en ".com"');
+      return;
+    }
 
- 
-  if (!aceptaTerminos) {
-    Alert.alert('Términos y condiciones', 'Debes aceptar los términos y condiciones.');
-    return;
-  }
+    if (!aceptaTerminos) {
+      isWeb ? window.alert('Debes aceptar los términos y condiciones.') : Alert.alert('Términos y condiciones', 'Debes aceptar los términos y condiciones.');
+      return;
+    }
 
-  Alert.alert('Registro exitoso', `Nombre: ${nombre}\nCorreo: ${correo}`);
-};
+    if (isWeb && window.confirm) {
+      const guardar = window.confirm('¿Deseas guardar tu información?');
+      if (guardar) {
+        window.alert(`Registro exitoso\nNombre: ${nombre}\nCorreo: ${correo}`);
+      }
+    } else {
+      Alert.alert(
+        'Confirmación',
+        '¿Deseas guardar tu información?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Guardar info', onPress: () => Alert.alert('Registro exitoso', `Nombre: ${nombre}\nCorreo: ${correo}`) }
+        ],
+        { cancelable: false }
+      );
+    }
+  };
 
- 
   if (!mostrarFormulario) {
     return (
       <Animated.View style={[styles.splashContainer, { opacity: opacidadSplash }]}>
-        <ImageBackground 
+        <ImageBackground
           source={require('../assets/Jose.jpg')}
-          style={styles.splashImage}
-          resizeMode="contain"
+          style={styles.fullscreenImage}
+          resizeMode="cover"
         />
       </Animated.View>
     );
   }
 
-  
   return (
-    <ImageBackground 
-      source={require('../assets/fondo.jpeg')} 
+    <ImageBackground
+      source={require('../assets/fondo.jpeg')}
       resizeMode='cover'
-      style={styles.background}
+      style={styles.fullscreenImage}
     >
       <View style={styles.container}>
         <Text style={styles.titulo}>Registro de usuario</Text>
 
         <Text style={styles.etiquetas}>Nombre: </Text>
-        <TextInput 
+        <TextInput
           style={styles.input}
           placeholder="Escribe tu nombre"
           value={nombre}
@@ -84,7 +106,7 @@ export default function Repaso() {
         />
 
         <Text style={styles.etiquetas}>Correo electrónico: </Text>
-        <TextInput 
+        <TextInput
           style={styles.input}
           placeholder="Escribe tu correo electrónico"
           value={correo}
@@ -111,24 +133,19 @@ export default function Repaso() {
 }
 
 const styles = StyleSheet.create({
+  fullscreenImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   splashContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  splashImage: {
-    width: 250,
-    height: 250,
-  },
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
- 
   container: {
     width: '90%',
-    backgroundColor: '#d3d3d3', 
+    backgroundColor: '#d3d3d3',
     padding: 20,
     borderRadius: 15,
     alignItems: 'center',
@@ -160,7 +177,7 @@ const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     marginVertical: 15,
     paddingHorizontal: 5,
     width: '100%',
