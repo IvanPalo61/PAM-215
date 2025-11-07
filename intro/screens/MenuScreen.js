@@ -12,6 +12,8 @@ import ActivityIndicatorScreen from './ActivityIndicatorScreen';
 import FlatListScreen from './FlatListScreen';
 import ModalScreen from './ModalScreen';
 import BottomSheetScreen from './BottomSheetScreen';
+import Programa from './Programa';
+
 
 export default function MenuScreen() {
   const [screen, setScreen] = useState('menu');
@@ -35,6 +37,8 @@ export default function MenuScreen() {
       return <ModalScreen />;
     case 'bottom':
       return <BottomSheetScreen />;
+    case 'programa':
+      return <Programa />;
       case 'repaso':
       return <Repaso />;
     default:
@@ -65,7 +69,9 @@ export default function MenuScreen() {
           <View style={styles.buttonContainer}>
             <Button title="Pract: ActivityIndicator" onPress={() => setScreen('activity')} />
           </View>
-
+ <View style={styles.buttonContainer}>
+            <Button title="Programa" onPress={() => setScreen('programa')} />
+          </View>
           <View style={styles.buttonContainer}>
             <Button title="Pract: FlatList & SectionList" onPress={() => setScreen('flatlist')} />
           </View>

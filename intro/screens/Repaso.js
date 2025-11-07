@@ -49,7 +49,6 @@ export default function Repaso() {
     return;
   }
 
- 
   Alert.alert('Registro exitoso', `Nombre: ${nombre}\nCorreo: ${correo}`);
 };
 
