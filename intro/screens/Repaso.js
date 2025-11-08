@@ -8,7 +8,10 @@ import {
   Switch, 
   ImageBackground, 
   Animated, 
-  Easing  
+  Easing,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
 export default function Repaso() {
@@ -94,40 +97,50 @@ export default function Repaso() {
       resizeMode='cover'
       style={styles.fullscreenImage}
     >
-      <View style={styles.container}>
-        <Text style={styles.titulo}>Registro de usuario</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={{ flex: 1, width: '100%' }}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <Text style={styles.titulo}>Registro de usuario</Text>
 
-        <Text style={styles.etiquetas}>Nombre: </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe tu nombre"
-          value={nombre}
-          onChangeText={setNombre}
-        />
+            <Text style={styles.etiquetas}>Nombre: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe tu nombre"
+              value={nombre}
+              onChangeText={setNombre}
+            />
 
-        <Text style={styles.etiquetas}>Correo electrónico: </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe tu correo electrónico"
-          value={correo}
-          onChangeText={setCorreo}
-          keyboardType="email-address"
-        />
+            <Text style={styles.etiquetas}>Correo electrónico: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe tu correo electrónico"
+              value={correo}
+              onChangeText={setCorreo}
+              keyboardType="email-address"
+            />
 
-        <View style={styles.switchContainer}>
-          <Text style={styles.textoSwitch}>Aceptar términos</Text>
-          <Switch
-            value={aceptaTerminos}
-            onValueChange={() => setAceptaTerminos(!aceptaTerminos)}
-            trackColor={{ true: 'green', false: 'gray' }}
-          />
-        </View>
+            <View style={styles.switchContainer}>
+              <Text style={styles.textoSwitch}>Aceptar términos</Text>
+              <Switch
+                value={aceptaTerminos}
+                onValueChange={() => setAceptaTerminos(!aceptaTerminos)}
+                trackColor={{ true: 'green', false: 'gray' }}
+              />
+            </View>
 
-        <Button
-          title="Mostrar Alerta"
-          onPress={mostrarAlerta}
-        />
-      </View>
+            <Button
+              title="Mostrar Alerta"
+              onPress={mostrarAlerta}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
@@ -142,6 +155,12 @@ const styles = StyleSheet.create({
   },
   splashContainer: {
     flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   container: {
     width: '90%',
