@@ -1,15 +1,19 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, 
-    Alert, ActivityIndicator, Platform } from "react-native";
+import { 
+    View, Text, TextInput, TouchableOpacity, FlatList, 
+    StyleSheet, Alert, ActivityIndicator, Platform 
+} from "react-native";
 import { UsuarioController } from "../controllers/UsuarioController";
 
 const controller = new UsuarioController();
 
-export default function UsuarioView(){
+export default function UsuarioView() {
+
     const [usuarios, setUsuarios] = useState([]);
     const [nombre, setNombre] = useState('');
     const [loading, setLoading] = useState(true);
     const [guardando, setGuardando] = useState(false);
+    const [editandoId, setEditandoId] = useState(null);
 
     // Cargar usuarios desde la BD
     const cargarUsuarios = useCallback(async () => {
@@ -17,15 +21,14 @@ export default function UsuarioView(){
             setLoading(true);
             const data = await controller.obtenerUsuarios();
             setUsuarios(data);
-            console.log(`${data.length} usuarios cargados`);
-        } catch(error) {
+        } catch (error) {
             Alert.alert('Error', error.message);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    // Inicializar y cargar datos
+    // Inicializar controlador
     useEffect(() => {
         const init = async () => {
             await controller.initialize();
@@ -35,107 +38,148 @@ export default function UsuarioView(){
         init();
         controller.addListener(cargarUsuarios);
 
-        return () => {
-            controller.removeListener(cargarUsuarios);
-        };
+        return () => controller.removeListener(cargarUsuarios);
     }, [cargarUsuarios]);
 
-    // Agregar nuevo usuario
-    const handleAgregar = async () => {
+    // Guardar / Actualizar usuario
+    const handleGuardar = async () => {
         if (guardando) return;
 
         try {
             setGuardando(true);
-            const usuarioCreado = await controller.crearUsuario(nombre);
-            Alert.alert(
-                'Usuario Creado', 
-                `"${usuarioCreado.nombre}" guardado con ID: ${usuarioCreado.id}`
-            );
+
+            if (editandoId) {
+                await controller.actualizarUsuario(editandoId, nombre);
+                Alert.alert("Usuario actualizado", "Los datos fueron modificados.");
+            } else {
+                await controller.crearUsuario(nombre);
+                Alert.alert("Usuario creado", "Se creó un nuevo usuario.");
+            }
+
             setNombre('');
-            await cargarUsuarios(); // refrescar lista después de agregar
-        } catch(error) {
-            Alert.alert('Error', error.message);
+            setEditandoId(null);
+            await cargarUsuarios();
+
+        } catch (error) {
+            Alert.alert("Error", error.message);
         } finally {
             setGuardando(false);
         }
     };
 
-    // Renderizar cada usuario
+    // Al presionar editar
+    const handleEditar = (usuario) => {
+        setEditandoId(usuario.id);
+        setNombre(usuario.nombre);
+    };
+
+    // Al presionar eliminar
+    const handleEliminar = (id) => {
+        Alert.alert(
+            "Confirmar eliminación",
+            "¿Seguro que deseas eliminar este usuario?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                { 
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: async () => {
+                        await controller.eliminarUsuario(id);
+                        cargarUsuarios();
+                    }
+                }
+            ]
+        );
+    };
+
+    // Render item de usuario
     const renderUsuario = ({ item, index }) => (
         <View style={styles.userItem}>
             <View style={styles.userNumber}>
                 <Text style={styles.userNumberText}>{index + 1}</Text>
             </View>
+
             <View style={styles.userInfo}>
                 <Text style={styles.userName}>{item.nombre}</Text>
                 <Text style={styles.userId}>ID: {item.id}</Text>
                 <Text style={styles.userDate}>
-                    {new Date(item.fechaCreacion).toLocaleDateString('es-MX', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                    })}
+                    {new Date(item.fechaCreacion).toLocaleDateString('es-MX')}
                 </Text>
+            </View>
+
+            {/* Botones editar / eliminar */}
+            <View style={styles.actions}>
+                <TouchableOpacity 
+                    style={styles.editButton}
+                    onPress={() => handleEditar(item)}
+                >
+                    <Text style={styles.actionText}>Editar</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                    style={styles.deleteButton}
+                    onPress={() => handleEliminar(item.id)}
+                >
+                    <Text style={styles.actionText}>X</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
 
     return (
         <View style={styles.container}>
-            {/* Zona del encabezado */}
-            <Text style={styles.title}>INSERT & SELECT</Text>
+            
+            <Text style={styles.title}>CRUD de Usuarios</Text>
             <Text style={styles.subtitle}>
-                {Platform.OS === 'web' ? 'WEB (LocalStorage)' : `${Platform.OS.toUpperCase()} (SQLite)`}
+                {Platform.OS === "web" ? "WEB (LocalStorage)" : `${Platform.OS.toUpperCase()} (SQLite)`}
             </Text>
 
-            {/* Zona del INSERT */}
+            {/* Formulario Crear/Editar */}
             <View style={styles.insertSection}>
-                <Text style={styles.sectionTitle}>Insertar Usuario</Text>
+                <Text style={styles.sectionTitle}>
+                    {editandoId ? "Editar Usuario" : "Insertar Usuario"}
+                </Text>
+
                 <TextInput
                     style={styles.input}
-                    placeholder="Escribe el nombre del usuario"
+                    placeholder="Nombre..."
                     value={nombre}
                     onChangeText={setNombre}
-                    editable={!guardando}
                 />
 
                 <TouchableOpacity 
-                    style={[styles.button, guardando && styles.buttonDisabled]} 
-                    onPress={handleAgregar}
-                    disabled={guardando} 
+                    style={[styles.button, guardando && styles.buttonDisabled]}
+                    onPress={handleGuardar}
+                    disabled={guardando}
                 >
                     <Text style={styles.buttonText}>
-                        {guardando ? 'Guardando...' : 'Agregar Usuario'}
+                        {guardando ? "Guardando..." : editandoId ? "Actualizar" : "Agregar"}
                     </Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Zona del SELECT */}
+            {/* Lista */}
             <View style={styles.selectSection}>
                 <View style={styles.selectHeader}>
                     <Text style={styles.sectionTitle}>Lista de Usuarios</Text>
-                    <TouchableOpacity style={styles.refreshButton} onPress={cargarUsuarios}>
+
+                    <TouchableOpacity onPress={cargarUsuarios}>
                         <Text style={styles.refreshText}>Recargar</Text>
                     </TouchableOpacity>
                 </View>
 
                 {loading ? (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color="#007AFF" />
-                        <Text style={styles.loadingText}>Cargando usuarios...</Text>
-                    </View>
+                    <ActivityIndicator size="large" color="#007AFF" />
                 ) : (
                     <FlatList
                         data={usuarios}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={renderUsuario}
                         ListEmptyComponent={
-                            <View style={styles.emptyContainer}>
-                                <Text style={styles.emptyText}>No hay usuarios</Text>
-                                <Text style={styles.emptySubtext}>Agrega el primero arriba</Text>
-                            </View>
+                            <Text style={{ textAlign: "center", marginTop: 30 }}>
+                                No hay usuarios
+                            </Text>
                         }
-                        contentContainerStyle={usuarios.length === 0 && styles.emptyList}
                     />
                 )}
             </View>
@@ -144,6 +188,35 @@ export default function UsuarioView(){
 }
 
 const styles = StyleSheet.create({
+
+
+    actions: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    editButton: {
+        backgroundColor: "#007AFF",
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 6,
+        marginRight: 8,
+    },
+
+    deleteButton: {
+        backgroundColor: "#FF3B30",
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        borderRadius: 6,
+    },
+
+    actionText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 12,
+    },
+
+   
     container: { flex: 1, backgroundColor: '#f5f5f5', paddingTop: 50 },
     title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 5 },
     subtitle: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 },
